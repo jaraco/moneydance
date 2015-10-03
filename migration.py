@@ -19,7 +19,8 @@ def delete_all_accounts():
 	"""
 	Delete all accounts from the file, allowing for a fresh import.
 	"""
-	txns = model.TransactionSet(moneydance.getCurrentAccountBook()).getAllTxns()
+	ts = model.TransactionSet(moneydance.getCurrentAccountBook())
+	txns = ts.getAllTxns()
 	txns.removeAllTxns()
 	root = moneydance.getCurrentAccount()
 	for account in root.getSubAccounts():
