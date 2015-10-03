@@ -27,6 +27,10 @@ def delete_all_accounts():
 
 
 def parse_date(date_str):
+	"""
+	Given a simple date string, parse it into a timestamp
+	suitable for setCreationDate.
+	"""
 	date = datetime.datetime(*map(int, date_str.split('-')))
 	seconds = calendar.timegm(date.utctimetuple())
 	timestamp = seconds*long(1000)
@@ -34,6 +38,10 @@ def parse_date(date_str):
 
 
 def create_account(details):
+	"""
+	Given a dictionary of account details, create an account
+	corresponding to those details and return said account.
+	"""
 	root = moneydance.getCurrentAccount()
 	book = moneydance.getCurrentAccountBook()
 	account = root.makeAccount(book, model.Account.AccountType.BANK, root)
@@ -51,6 +59,10 @@ def create_account(details):
 
 
 def import_transactions(account):
+	"""
+	Given an account, import the transactions for that account
+	from a file of the same account name in this directory.
+	"""
 	root = moneydance.getCurrentAccount()
 	book = moneydance.getCurrentAccountBook()
 	transactions = os.path.join(here, account.getAccountName()) + '.qif'
@@ -73,6 +85,9 @@ def import_transactions(account):
 
 
 def run(moneydance=None):
+	"""
+	Run the import process across all accounts in accounts.json.
+	"""
 	if moneydance:
 		init(moneydance)
 	delete_all_accounts()
