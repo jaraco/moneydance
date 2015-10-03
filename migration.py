@@ -33,7 +33,7 @@ def parse_date(date_str):
 	return timestamp
 
 
-def import_account(details):
+def create_account(details):
 	root = moneydance.getCurrentAccount()
 	book = moneydance.getCurrentAccountBook()
 	account = root.makeAccount(book, model.Account.AccountType.BANK, root)
@@ -47,7 +47,7 @@ def import_account(details):
 		currency = book.getCurrencies().getCurrencyByIDString(idstr)
 		account.setCurrencyType(currency)
 	account.setCreationDate(parse_date(details['create date']))
-	import_transactions(account)
+	return account
 
 
 def import_transactions(account):
@@ -57,7 +57,7 @@ def import_transactions(account):
 	file = java.io.File(transactions)
 	date_format = Common.QIF_FORMAT_DDMMYY
 	dec = '.'
-	currency = book.getCurrencies().getBaseType()
+	currency = account.getCurrencyType()
 	import_mode = Common.QIF_MODE_TRANSFER
 	accts_only = False
 	moneydance.importQIFIntoAccount(
@@ -71,12 +71,16 @@ def import_transactions(account):
 		accts_only,
 	)
 
+
 def run(moneydance=None):
 	if moneydance:
 		init(moneydance)
 	delete_all_accounts()
 	account_meta = os.path.join(here, 'accounts.json')
 	with open(account_meta) as meta:
-		accounts = json.load(meta)
+		accounts_meta = json.load(meta)
+	# first, create all accounts
+	accounts = list(map(create_account, accounts_meta))
+	# then import transactions into the created accounts
 	for account in accounts:
-		import_account(account)
+		import_transactions(account)
