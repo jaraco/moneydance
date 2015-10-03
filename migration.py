@@ -40,7 +40,12 @@ def import_account(details):
 	account.setAccountName(details['name'])
 	account.setBankName(details['bank'])
 	account.setBankAccountNumber(details['number'])
-	account.setOFXBankID(details['bank id'])
+	if 'bank id' in details:
+		account.setOFXBankID(details['bank id'])
+	if 'currency' in details:
+		idstr = details['currency']
+		currency = book.getCurrencies().getCurrencyByIDString(idstr)
+		account.setCurrencyType(currency)
 	account.setCreationDate(parse_date(details['create date']))
 	import_transactions(account)
 
