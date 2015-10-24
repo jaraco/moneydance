@@ -120,7 +120,8 @@ def correct_opening_balance(qif_file, account_name):
 	"""
 	with io.open(qif_file, encoding='utf-8') as f:
 		data = f.read()
-	pat = re.compile('^L\[' + account_name + r'\]\n', re.MULTILINE)
+	name = re.escape('[' + account_name + ']')
+	pat = re.compile('^L' + name + r'\n', re.MULTILINE)
 	patched_data = pat.sub('', data)
 	if patched_data == data:
 		print("No opening balanace detected for", account_name)
