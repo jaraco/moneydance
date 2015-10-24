@@ -1,3 +1,10 @@
+"""
+Migration support scripts to help facilitate loading many
+accounts from a Microsoft Money export, based on the
+instructions at
+https://infinitekind.zendesk.com/hc/en-us/articles/200684598-Moving-from-MS-Money-to-Moneydance
+"""
+
 from __future__ import print_function, unicode_literals
 
 import os
@@ -6,6 +13,7 @@ import datetime
 import calendar
 import re
 import io
+import itertools
 
 import com.infinitekind.moneydance.model as model
 import com.moneydance.apps.md.controller.Common as Common
@@ -13,8 +21,6 @@ import java.io
 
 moneydance = None
 here = os.path.dirname(__file__)
-
-# https://infinitekind-public.slack.com/archives/moneydance/p1443904386000011
 
 
 def init(moneydance):
@@ -47,11 +53,15 @@ def parse_date(date_str):
 def create_account(details):
 	"""
 	Given a dictionary of account details, create an account
-	corresponding to those details and return said account.
+	corresponding to those details and yield said account. If
+	the account is an investment account, also yield a corresponding
+	cash account.
 	"""
 	root = moneydance.getCurrentAccount()
 	book = moneydance.getCurrentAccountBook()
-	account = root.makeAccount(book, model.Account.AccountType.BANK, root)
+	type_name = details.get('type', 'bank')
+	type_ = getattr(model.Account.AccountType, type_name.upper())
+	account = root.makeAccount(book, type_, root)
 	account.setAccountName(details['name'])
 	account.setBankName(details['bank'])
 	account.setBankAccountNumber(details['number'])
@@ -62,7 +72,14 @@ def create_account(details):
 		currency = book.getCurrencies().getCurrencyByIDString(idstr)
 		account.setCurrencyType(currency)
 	account.setCreationDate(parse_date(details['create date']))
-	return account
+	yield account
+	if type_ == model.Account.AccountType.INVESTMENT:
+		print("Creating cash account for", account.getAccountName())
+		# create the cash account
+		details['name'] += ' (Cash)'
+		details.pop('type')
+		for acct in create_account(details):
+			yield acct
 
 
 def import_transactions(account):
@@ -124,6 +141,12 @@ def correct_encoding(qif_file):
 	return out_file
 
 
+# from Python 2.7 docs
+def flatten(listOfLists):
+    "Flatten one level of nesting"
+    return itertools.chain.from_iterable(listOfLists)
+
+
 def run(moneydance=None):
 	"""
 	Run the import process across all accounts in accounts.json.
@@ -135,7 +158,7 @@ def run(moneydance=None):
 	with open(account_meta) as meta:
 		accounts_meta = json.load(meta)
 	# first, create all accounts
-	accounts = list(map(create_account, accounts_meta))
+	accounts = list(flatten(map(create_account, accounts_meta)))
 	# then import transactions into the created accounts
 	for account in accounts:
 		import_transactions(account)
