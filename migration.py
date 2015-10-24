@@ -158,6 +158,7 @@ def run(moneydance=None):
 	account_meta = os.path.join(here, 'accounts.json')
 	with open(account_meta) as meta:
 		accounts_meta = json.load(meta)
+	print("Migrating", len(accounts_meta), "accounts")
 	# first, create all accounts
 	accounts = list(flatten(map(create_account, accounts_meta)))
 	# then import transactions into the created accounts
