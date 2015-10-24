@@ -1,7 +1,11 @@
+from __future__ import print_function, unicode_literals
+
 import os
 import json
 import datetime
 import calendar
+import re
+import io
 
 import com.infinitekind.moneydance.model as model
 import com.moneydance.apps.md.controller.Common as Common
@@ -9,6 +13,8 @@ import java.io
 
 moneydance = None
 here = os.path.dirname(__file__)
+
+# https://infinitekind-public.slack.com/archives/moneydance/p1443904386000011
 
 
 def init(moneydance):
@@ -67,6 +73,8 @@ def import_transactions(account):
 	root = moneydance.getCurrentAccount()
 	book = moneydance.getCurrentAccountBook()
 	transactions = os.path.join(here, account.getAccountName()) + '.qif'
+	transactions = correct_encoding(transactions)
+	correct_opening_balance(transactions, account.getAccountName())
 	file = java.io.File(transactions)
 	date_format = Common.QIF_FORMAT_DDMMYY
 	dec = '.'
@@ -83,6 +91,37 @@ def import_transactions(account):
 		import_mode,
 		accts_only,
 	)
+
+
+def correct_opening_balance(qif_file, account_name):
+	"""
+	QIF files from Money have a "Opening Balance" transaction whose
+	category is a transfer to the same account. This transaction when
+	imported into Moneydance creates a duplicate account. Remove
+	that category such that the transaction appears with no
+	category.
+	"""
+	with io.open(qif_file, encoding='utf-8') as f:
+		data = f.read()
+	pat = re.compile('^L\[' + account_name + r'\]\n', re.MULTILINE)
+	patched_data = pat.sub('', data)
+	if patched_data == data:
+		print("No opening balanace detected for", account_name)
+	with io.open(qif_file, 'w', encoding='utf-8') as f:
+		f.write(patched_data)
+
+
+def correct_encoding(qif_file):
+	"""
+	Money saves the file as Latin-1 encoding, which is a terrible
+	encoding, and not recognized by Moneydance. Switch to UTF-8.
+	Keep the old file around for reference and return a new filename.
+	"""
+	out_file = qif_file.replace('.qif', ' (edit).qif')
+	with io.open(qif_file, encoding='latin-1') as in_:
+		with io.open(out_file, 'w', encoding='utf-8') as out:
+			out.writelines(in_.readlines())
+	return out_file
 
 
 def run(moneydance=None):
