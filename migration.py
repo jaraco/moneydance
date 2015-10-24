@@ -159,7 +159,11 @@ def run(moneydance=None):
 	delete_all_accounts()
 	account_meta = os.path.join(here, 'accounts.json')
 	with open(account_meta) as meta:
-		accounts_meta = json.load(meta)
+		try:
+			accounts_meta = json.load(meta)
+		except ValueError as err:
+			print("Error parsing accounts:", err)
+			return
 	print("Migrating", len(accounts_meta), "accounts")
 	# first, create all accounts
 	accounts = list(flatten(map(create_account, accounts_meta)))
