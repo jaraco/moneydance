@@ -64,14 +64,16 @@ def create_account(details):
 	account = root.makeAccount(book, type_, root)
 	account.setAccountName(details['name'])
 	account.setBankName(details['bank'])
-	account.setBankAccountNumber(details['number'])
+	if 'number' in details:
+		account.setBankAccountNumber(details['number'])
 	if 'bank id' in details:
 		account.setOFXBankID(details['bank id'])
 	if 'currency' in details:
 		idstr = details['currency']
 		currency = book.getCurrencies().getCurrencyByIDString(idstr)
 		account.setCurrencyType(currency)
-	account.setCreationDate(parse_date(details['create date']))
+	if 'create date' in details:
+		account.setCreationDate(parse_date(details['create date']))
 	yield account
 	if type_ == model.Account.AccountType.INVESTMENT:
 		print("Creating cash account for", account.getAccountName())
