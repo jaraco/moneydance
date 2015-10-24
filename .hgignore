@@ -1,0 +1,4 @@
+syntax: glob
+*.qif
+accounts.json
+*.class
