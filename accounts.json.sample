@@ -4,14 +4,12 @@
 		"bank": "Chase",
 		"number": "1234567",
 		"bank id": "999999997",
-		"create date": "2000-1-1"
 	},
 
 	{
 		"name": "Hong Kong Wallet",
 		"bank": "self",
 		"number": "7",
-		"create date": "2011-1-1",
 		"currency": "HKD"
 	},
 
@@ -20,6 +18,5 @@
 		"bank": "Fidelity Investments",
 		"type": "investment",
 		"number": "X999999999",
-		"create date": "2010-6-1"
 	}
 ]

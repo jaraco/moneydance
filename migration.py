@@ -22,6 +22,9 @@ import java.io
 moneydance = None
 here = os.path.dirname(__file__)
 
+# suppress linter warning for Py3
+if False:
+	long = int
 
 def init(moneydance):
 	globals().update(moneydance=moneydance)
@@ -37,6 +40,37 @@ def delete_all_accounts():
 	root = moneydance.getCurrentAccount()
 	for account in root.getSubAccounts():
 		account.deleteItem()
+
+
+def get_account_by_name(name):
+	root = moneydance.getCurrentAccountBook()
+	root_acct = root.getRootAccount()
+	return root_acct.getAccountByName(name)
+
+
+def txns_for(account):
+	root = moneydance.getCurrentAccountBook()
+	return root.getTransactionSet().getTransactionsForAccount(account)
+
+
+def first_txn_date(account):
+	all_txns = txns_for(account)
+	first_txn = next(sorted(all_txns, key=lambda txn: txn.getDateInt()))
+	return ts_from_date_int(first_txn.getDateInt())
+
+
+def ts_from_date_int(date_int):
+	"""
+	Take a string of the form YYYYMMDD and convert it to a
+	timestamp.
+	"""
+	year = date_int // 10000
+	month = (date_int % 10000) // 100
+	day = (date_int % 100)
+	date = datetime.datetime(year, month, day)
+	seconds = calendar.timegm(date.utctimetuple())
+	timestamp = seconds*long(1000)
+	return timestamp
 
 
 def parse_date(date_str):
@@ -72,8 +106,6 @@ def create_account(details):
 		idstr = details['currency']
 		currency = book.getCurrencies().getCurrencyByIDString(idstr)
 		account.setCurrencyType(currency)
-	if 'create date' in details:
-		account.setCreationDate(parse_date(details['create date']))
 	yield account
 	if type_ == model.Account.AccountType.INVESTMENT:
 		print("Creating cash account for", account.getAccountName())
@@ -110,6 +142,8 @@ def import_transactions(account):
 		import_mode,
 		accts_only,
 	)
+
+	account.setCreationDate(ts_from_date_int(first_txn_date(account)))
 
 
 def correct_opening_balance(qif_file, account_name):
