@@ -55,8 +55,9 @@ def txns_for(account):
 
 def first_txn_date(account):
 	all_txns = txns_for(account)
-	first_txn = next(sorted(all_txns, key=lambda txn: txn.getDateInt()))
-	return ts_from_date_int(first_txn.getDateInt())
+	by_date = lambda txn: txn.getDateInt()
+	dates = map(by_date, all_txns)
+	return min(dates)
 
 
 def ts_from_date_int(date_int):
