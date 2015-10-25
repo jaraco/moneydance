@@ -188,6 +188,7 @@ def run(moneydance=None):
 	"""
 	Run the import process across all accounts in accounts.json.
 	"""
+	start = datetime.datetime.utcnow()
 	if moneydance:
 		init(moneydance)
 	delete_all_accounts()
@@ -204,3 +205,5 @@ def run(moneydance=None):
 	# then import transactions into the created accounts
 	for account in accounts:
 		import_transactions(account)
+	end = datetime.datetime.utcnow()
+	print("Completed in", end-start)
