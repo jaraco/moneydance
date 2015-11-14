@@ -193,6 +193,8 @@ def run(moneydance=None):
 	if moneydance:
 		init(moneydance)
 	delete_all_accounts()
+	end = datetime.datetime.utcnow()
+	print("Deleted existing accounts in", end-start)
 	account_meta = os.path.join(here, 'accounts.json')
 	with open(account_meta) as meta:
 		try:
