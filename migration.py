@@ -98,7 +98,8 @@ def create_account(details):
 	type_ = getattr(model.Account.AccountType, type_name.upper())
 	account = root.makeAccount(book, type_, root)
 	account.setAccountName(details['name'])
-	account.setBankName(details['bank'])
+	if 'bank' in details:
+		account.setBankName(details['bank'])
 	if 'number' in details:
 		account.setBankAccountNumber(details['number'])
 	if 'bank id' in details:
