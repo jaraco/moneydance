@@ -124,7 +124,14 @@ def import_transactions(account):
 	"""
 	root = moneydance.getCurrentAccount()
 	book = moneydance.getCurrentAccountBook()
-	transactions = os.path.join(here, account.getAccountName()) + '.qif'
+	acct_name = account.getAccountName()
+	transactions = os.path.join(here, acct_name) + '.qif'
+	if account.getAccountType() == model.Account.AccountType.LOAN:
+		print("Cannot import transactions for loan account", acct_name)
+		return
+	if not os.path.isfile(transactions):
+		print("No transactions found for", acct_name)
+		return
 	transactions = correct_encoding(transactions)
 	correct_opening_balance(transactions, account.getAccountName())
 	file = java.io.File(transactions)
