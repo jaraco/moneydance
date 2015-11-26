@@ -192,6 +192,39 @@ def flatten(listOfLists):
     "Flatten one level of nesting"
     return itertools.chain.from_iterable(listOfLists)
 
+def pairwise(iterable):
+    "s -> (s0,s1), (s1,s2), (s2, s3), ..."
+    a, b = itertools.tee(iterable)
+    next(b, None)
+    return itertools.izip(a, b)
+
+
+def move_cash(accounts):
+	"move cash transactions into investment accounts"
+	inv_pairs = filter(is_inv_pair, pairwise(accounts))
+	list(itertools.starmap(merge_inv_cash, inv_pairs))
+
+
+def is_inv_pair(acct_pair):
+	acct, _ = acct_pair
+	return acct.getAccountType() == model.Account.AccountType.INVESTMENT
+
+
+def merge_inv_cash(inv_acct, cash_acct):
+	"""
+	Given an investment account and its sister cash account,
+	move the cash transactions into the investment account.
+	"""
+	cash_txns = (
+		txn
+		for txn in txns_for(cash_acct)
+		if txn.getAccount() == cash_acct
+		and not txn.isTransferTo(inv_acct)
+	)
+	for txn in cash_txns:
+		txn.setAccount(inv_acct)
+		txn.getParentTxn().syncItem()
+
 
 def run(moneydance=None):
 	"""
@@ -216,5 +249,8 @@ def run(moneydance=None):
 	# then import transactions into the created accounts
 	for account in accounts:
 		import_transactions(account)
+
+	move_cash(accounts)
+
 	end = datetime.datetime.utcnow()
 	print("Completed in", end-start)
