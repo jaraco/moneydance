@@ -3,6 +3,10 @@ Migration support scripts to help facilitate loading many
 accounts from a Microsoft Money export, based on the
 instructions at
 https://infinitekind.zendesk.com/hc/en-us/articles/200684598-Moving-from-MS-Money-to-Moneydance
+
+In addition to those instructions, here are some other caveats:
+
+ - Rename any cash accounts to be "Investment Account (Cash)"
 """
 
 from __future__ import print_function, unicode_literals
@@ -235,6 +239,7 @@ def run(moneydance=None):
 		init(moneydance)
 	delete_all_accounts()
 	end = datetime.datetime.utcnow()
+
 	print("Deleted existing accounts in", end-start)
 	account_meta = os.path.join(here, 'accounts.json')
 	with open(account_meta) as meta:
