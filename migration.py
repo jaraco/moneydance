@@ -7,6 +7,8 @@ https://infinitekind.zendesk.com/hc/en-us/articles/200684598-Moving-from-MS-Mone
 In addition to those instructions, here are some other caveats:
 
  - Rename any cash accounts to be "Investment Account (Cash)"
+ - If the account name has any special characters, replace them
+   with a dash in the saved file.
 """
 
 from __future__ import print_function, unicode_literals
@@ -130,7 +132,8 @@ def import_transactions(account):
 	root = moneydance.getCurrentAccount()
 	book = moneydance.getCurrentAccountBook()
 	acct_name = account.getAccountName()
-	transactions = os.path.join(here, acct_name) + '.qif'
+	fs_name = acct_name.replace('*', '-')
+	transactions = os.path.join(here, fs_name) + '.qif'
 	if account.getAccountType() == model.Account.AccountType.LOAN:
 		print("Cannot import transactions for loan account", acct_name)
 		return
