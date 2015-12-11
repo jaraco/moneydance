@@ -230,6 +230,7 @@ def merge_inv_cash(inv_acct, cash_acct):
 	for txn in cash_txns:
 		txn.setAccount(inv_acct)
 		txn.getParentTxn().syncItem()
+	cash_acct.deleteItem()
 
 
 def run(moneydance=None):
