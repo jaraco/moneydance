@@ -1,3 +1,5 @@
+# -*- coding: utf-8
+
 """
 Migration support scripts to help facilitate loading many
 accounts from a Microsoft Money export, based on the
@@ -233,13 +235,38 @@ def merge_inv_cash(inv_acct, cash_acct):
 	cash_acct.deleteItem()
 
 
+def create_currencies():
+	"""
+	Create bitcoin currency and others that aren't supplied out
+	of the box.
+	"""
+	table = moneydance.getCurrentAccountBook().getCurrencies()
+	bitcoin = model.CurrencyType.currencyFromFields(
+		0,	# id
+		"BTC",	# idString
+		"Bitcoin",	# name
+		0,	# rate
+		8,	# decimal places
+		"฿",	# prefix
+		None,	# suffix
+		None,	# ticketSymbol
+		0,	# effectiveDate
+		0,	# currencyType
+		table,	# table
+	)
+	table.addCurrencyType(bitcoin)
+
+
 def run(moneydance=None):
 	"""
 	Run the import process across all accounts in accounts.json.
 	"""
-	start = datetime.datetime.utcnow()
 	if moneydance:
 		init(moneydance)
+
+	create_currencies()
+
+	start = datetime.datetime.utcnow()
 	delete_all_accounts()
 	end = datetime.datetime.utcnow()
 
