@@ -129,7 +129,6 @@ def import_transactions(account):
 	Given an account, import the transactions for that account
 	from a file of the same account name in this directory.
 	"""
-	root = moneydance.getCurrentAccount()
 	book = moneydance.getCurrentAccountBook()
 	acct_name = account.getAccountName()
 	fs_name = acct_name.replace('*', '-')
