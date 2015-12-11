@@ -245,8 +245,8 @@ def create_currencies():
 		0,	# id
 		"BTC",	# idString
 		"Bitcoin",	# name
-		0,	# rate
-		8,	# decimal places
+		350,	# rate
+		4,	# decimal places
 		"฿",	# prefix
 		None,	# suffix
 		None,	# ticketSymbol
