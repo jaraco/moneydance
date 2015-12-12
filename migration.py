@@ -260,6 +260,12 @@ def create_currencies():
 	table.addCurrencyType(bitcoin)
 
 
+def load_accounts_meta():
+	filename = os.path.join(here, 'accounts.json')
+	with open(filename) as meta:
+		return json.load(meta)
+
+
 def run(moneydance=None):
 	"""
 	Run the import process across all accounts in accounts.json.
@@ -272,15 +278,14 @@ def run(moneydance=None):
 	start = datetime.datetime.utcnow()
 	delete_all_accounts()
 	end = datetime.datetime.utcnow()
-
 	print("Deleted existing accounts in", end-start)
-	account_meta = os.path.join(here, 'accounts.json')
-	with open(account_meta) as meta:
-		try:
-			accounts_meta = json.load(meta)
-		except ValueError as err:
-			print("Error parsing accounts:", err)
-			return
+
+	try:
+		accounts_meta = load_accounts_meta()
+	except ValueError as err:
+		print("Error loading accounts", err)
+		return
+
 	print("Migrating", len(accounts_meta), "accounts")
 	# first, create all accounts
 	accounts = list(flatten(map(create_account, accounts_meta)))
