@@ -22,6 +22,7 @@ import calendar
 import re
 import io
 import itertools
+import glob
 
 import com.infinitekind.moneydance.model as model
 import com.moneydance.apps.md.controller.Common as Common
@@ -126,6 +127,13 @@ def create_account(details):
 			yield acct
 
 
+def safe(account_name):
+	"""
+	Create a filesystem-safe name from an account name.
+	"""
+	return account_name.replace('*', '-')
+
+
 def import_transactions(account):
 	"""
 	Given an account, import the transactions for that account
@@ -133,8 +141,7 @@ def import_transactions(account):
 	"""
 	book = moneydance.getCurrentAccountBook()
 	acct_name = account.getAccountName()
-	fs_name = acct_name.replace('*', '-')
-	transactions = os.path.join(here, fs_name) + '.qif'
+	transactions = os.path.join(here, safe(acct_name)) + '.qif'
 	if account.getAccountType() == model.Account.AccountType.LOAN:
 		print("Cannot import transactions for loan account", acct_name)
 		return
@@ -263,7 +270,26 @@ def create_currencies():
 def load_accounts_meta():
 	filename = os.path.join(here, 'accounts.json')
 	with open(filename) as meta:
-		return json.load(meta)
+		accounts = json.load(meta)
+
+	return accounts + infer_accounts(accounts)
+
+
+def infer_accounts(declared_accounts):
+	known_names = {safe(account['name']) for account in declared_accounts}
+	exports = glob.glob(os.path.join(here, '*.qif'))
+	export_names = {
+		root
+		for root, ext in map(os.path.splitext, map(os.path.basename, exports))
+		if not root.endswith(' (Cash)')
+	}
+	new_names = export_names - known_names
+	if not new_names:
+		raise ValueError()
+	msg = "Assuming bank for these detected accounts: ", ', '.join(new_names)
+	if new_names:
+		print(msg)
+	return [dict(name=name) for name in new_names]
 
 
 def run(moneydance=None):
