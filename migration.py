@@ -241,11 +241,13 @@ def create_currencies():
 	of the box.
 	"""
 	table = moneydance.getCurrentAccountBook().getCurrencies()
+	dollar_per_bitcoin = 350
+	bitcoin_per_dollar = 1/dollar_per_bitcoin
 	bitcoin = model.CurrencyType.currencyFromFields(
 		0,	# id
 		"BTC",	# idString
 		"Bitcoin",	# name
-		350,	# rate
+		bitcoin_per_dollar*100,	# rate
 		4,	# decimal places
 		"฿",	# prefix
 		None,	# suffix
