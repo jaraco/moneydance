@@ -159,6 +159,7 @@ def import_transactions(account):
 		import_mode,
 		accts_only,
 	)
+	os.remove(transactions)
 
 	account.setCreationDate(ts_from_date_int(first_txn_date(account)))
 
@@ -188,7 +189,7 @@ def correct_encoding(qif_file):
 	encoding, and not recognized by Moneydance. Switch to UTF-8.
 	Keep the old file around for reference and return a new filename.
 	"""
-	out_file = qif_file.replace('.qif', ' (edit).qif')
+	out_file = qif_file.replace('.qif', '.uqif')
 	with io.open(qif_file, encoding='latin-1') as in_:
 		with io.open(out_file, 'w', encoding='utf-8') as out:
 			out.writelines(in_.readlines())
