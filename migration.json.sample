@@ -20,5 +20,15 @@
 			"type": "investment",
 			"number": "X999999999",
 		}
+	],
+	"currencies": [
+		{
+			"rate": 350,
+			"code": "BTC",
+			"name": "Bitcoin",
+			"decimal_places": 4,
+			"prefix": "฿",
+			"suffix": null
+		}
 	]
 }

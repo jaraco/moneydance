@@ -248,17 +248,25 @@ def create_currencies():
 	Create bitcoin currency and others that aren't supplied out
 	of the box.
 	"""
+	specs = load_metadata().get('currencies', [])
+	for spec in specs:
+		_create_currency(**spec)
+
+
+def _create_currency(code, name, rate=1, decimal_places=2, prefix=None, suffix=None):
+	"""
+	rate is the value in USD of one unit of this new currency
+	"""
 	table = moneydance.getCurrentAccountBook().getCurrencies()
-	dollar_per_bitcoin = 350
-	bitcoin_per_dollar = 1/dollar_per_bitcoin
+	currency_per_dollar = 1/rate
 	bitcoin = model.CurrencyType.currencyFromFields(
 		0,	# id
-		"BTC",	# idString
-		"Bitcoin",	# name
-		bitcoin_per_dollar*100,	# rate
-		4,	# decimal places
-		"฿",	# prefix
-		None,	# suffix
+		code,	# idString
+		name,	# name
+		currency_per_dollar*100,	# rate
+		decimal_places,	# decimal places
+		prefix,	# prefix
+		suffix,	# suffix
 		None,	# ticketSymbol
 		0,	# effectiveDate
 		0,	# currencyType
