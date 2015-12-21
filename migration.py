@@ -253,26 +253,26 @@ def create_currencies():
 		_create_currency(**spec)
 
 
-def _create_currency(code, name, rate=1, decimal_places=None, prefix=None, suffix=None):
+def _create_currency(code, name, rate=1, decimal_places=2, prefix=None, suffix=None):
 	"""
-	rate is the value in USD of one unit of this new currency
+	rate is the value of one unit of the default currency in this new currency
 	"""
 	table = moneydance.getCurrentAccountBook().getCurrencies()
 	currency = model.CurrencyType(table)
 	currency.setCurrencyType(model.CurrencyType.Type.CURRENCY)
 	currency.setIDString(code)
 	currency.setName(name)
-	# account for the weird way that Moneydance handles the rate
-	# https://infinitekind-public.slack.com/archives/moneydance/p1450707363000077
-	eff_dec_places = decimal_places or 2
-	adj_rate = rate * 10**(eff_dec_places + 1)
-	currency.setUserRate(adj_rate)
-	if decimal_places:
-		currency.setDecimalPlaces(decimal_places)
+	# important to always set decimal places. Otherwise, moneydance
+	# will set the decimal places to 2 after setting the rate, which
+	# will break the rate.
+	currency.setDecimalPlaces(decimal_places)
 	if prefix:
 		currency.setPrefix(prefix)
 	if suffix:
 		currency.setSuffix(suffix)
+	# important that you set the rate after setting decimal places;
+	# otherwise, setting decimal places will adjust the rate.
+	currency.setUserRate(rate)
 	currency.syncItem()
 
 
