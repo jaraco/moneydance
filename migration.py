@@ -267,15 +267,21 @@ def create_currencies():
 	table.addCurrencyType(bitcoin)
 
 
-def load_accounts_meta():
-	filename = os.path.join(here, 'accounts.json')
+def load_metadata():
+	filename = os.path.join(here, 'migration.json')
 	with open(filename) as meta:
-		accounts = json.load(meta)
+		return json.load(meta)
 
+
+def load_accounts_meta():
+	accounts = load_metadata()['accounts']
 	return accounts + infer_accounts(accounts)
 
 
 def infer_accounts(declared_accounts):
+	"""
+	Discover any accounts that were exported but not declared and add them
+	"""
 	known_names = {safe(account['name']) for account in declared_accounts}
 	exports = glob.glob(os.path.join(here, '*.qif'))
 	export_names = {

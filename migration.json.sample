@@ -1,0 +1,24 @@
+{
+	"accounts": [
+		{
+			"name": "My Checking",
+			"bank": "Chase",
+			"number": "1234567",
+			"bank id": "999999997",
+		},
+
+		{
+			"name": "Hong Kong Wallet",
+			"bank": "self",
+			"number": "7",
+			"currency": "HKD"
+		},
+
+		{
+			"name": "Fidelity Brokerage",
+			"bank": "Fidelity Investments",
+			"type": "investment",
+			"number": "X999999999",
+		}
+	]
+}
