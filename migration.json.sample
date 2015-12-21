@@ -23,12 +23,17 @@
 	],
 	"currencies": [
 		{
-			"rate": 350,
+			"rate": 0.0028571428,
 			"code": "BTC",
 			"name": "Bitcoin",
-			"decimal_places": 4,
-			"prefix": "฿",
-			"suffix": null
+			"decimal_places": 8,
+			"prefix": "฿"
+		},
+		{
+			"rate": 0.26,
+			"code": "PLN",
+			"name": "Polish Zloty",
+			"suffix": "zł"
 		}
 	]
 }
