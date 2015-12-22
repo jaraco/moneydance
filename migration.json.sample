@@ -19,6 +19,13 @@
 			"bank": "Fidelity Investments",
 			"type": "investment",
 			"number": "X999999999",
+		},
+
+		{
+			"name": "Chase Freedom",
+			"bank": "Chase",
+			"type": "credit card",
+			"number": "1234 5678 9012 3456"
 		}
 	],
 	"currencies": [

@@ -103,7 +103,7 @@ def create_account(details):
 	"""
 	root = moneydance.getCurrentAccount()
 	book = moneydance.getCurrentAccountBook()
-	type_name = details.get('type', 'bank')
+	type_name = details.get('type', 'bank').replace(' ', '_')
 	type_ = getattr(model.Account.AccountType, type_name.upper())
 	account = root.makeAccount(book, type_, root)
 	account.setAccountName(details['name'])
