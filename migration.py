@@ -286,9 +286,18 @@ def load_metadata():
 		return json.load(meta)
 
 
+class Everything:
+	def __contains__(self, other):
+		return True
+
+
 def load_accounts_meta():
-	accounts = load_metadata()['accounts']
-	return accounts + infer_accounts(accounts)
+	meta = load_metadata()
+	accounts = meta['accounts']
+	limit_accounts = meta.get('limit accounts', Everything())
+	is_included = lambda acct: acct['name'] in limit_accounts
+	all_accounts = accounts + infer_accounts(accounts)
+	return list(filter(is_included, all_accounts))
 
 
 def infer_accounts(declared_accounts):
