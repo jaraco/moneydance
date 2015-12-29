@@ -24,6 +24,10 @@ import io
 import itertools
 import glob
 
+# Use lazy-evaluated versions as if under Python 3
+filter = itertools.ifilter
+map = itertools.imap
+
 import com.infinitekind.moneydance.model as model
 import com.moneydance.apps.md.controller.Common as Common
 import java.io
