@@ -307,6 +307,35 @@ def infer_accounts(declared_accounts):
 	return [dict(name=name) for name in new_names]
 
 
+def find_duplicate_transactions(account):
+	"""
+	For a given foreign transaction account, find matching
+	transaction pairs.
+	"""
+	local_txns = (
+		txn for txn in
+		txns_for(account).iterator()
+		if isinstance(txn, model.ParentTxn)
+	)
+	remote_txns = (
+		txn
+		for txn in txns_for(account).iterator()
+		if not isinstance(txn, model.ParentTxn)
+	)
+	pairs = itertools.product(local_txns, remote_txns)
+
+	for local, remote in pairs:
+		match = (
+			local.getMemo() == remote.getOtherTxn(0).getMemo()
+			and
+			local.getDescription() == remote.getDescription()
+			and
+			local.getDateInt() == remote.getDateInt()
+		)
+		if match:
+			yield local, remote
+
+
 def run(moneydance=None):
 	"""
 	Run the import process across all accounts in accounts.json.
