@@ -336,6 +336,33 @@ def find_duplicate_transactions(account):
 			yield local, remote
 
 
+def is_foreign(account):
+	root = moneydance.getCurrentAccount()
+	root_currency = root.getCurrencyType()
+	return account.getCurrencyType() != root_currency
+
+
+def merge_exchanges(account):
+	"""
+	Merge duplicate transactions in the indicated
+	foreign currency account.
+	"""
+	dupes = find_duplicate_transactions(account)
+	list(itertools.starmap(_merge_exchange, dupes))
+
+
+def _merge_exchange(local, remote):
+	"""
+	Given a local transaction and a remote transaction in a
+	foreign account, reset the foreign amount in the remote
+	transaction to match the amount of the local transaction
+	and then delete the local transaction (preferring the
+	transaction as entered in the default currency account)
+	"""
+	remote.setAmount(local.getValue(), remote.getAmount())
+	local.deleteItem()
+
+
 def run(moneydance=None):
 	"""
 	Run the import process across all accounts in accounts.json.
@@ -362,6 +389,8 @@ def run(moneydance=None):
 	# then import transactions into the created accounts
 	for account in accounts:
 		import_transactions(account)
+
+	list(map(merge_exchanges, filter(is_foreign, accounts)))
 
 	move_cash(accounts)
 
