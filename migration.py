@@ -257,6 +257,10 @@ def create_currencies():
 		_create_currency(**spec)
 
 
+def get_base_currency():
+	return moneydance.getCurrentAccountBook().getCurrencies().getBaseType()
+
+
 def _create_currency(code, name, rate=1, decimal_places=2, prefix=None, suffix=None):
 	"""
 	rate is the value of one unit of the default currency in this new currency
@@ -356,9 +360,7 @@ def find_duplicate_transactions(account):
 
 
 def is_foreign(account):
-	root = moneydance.getCurrentAccount()
-	root_currency = root.getCurrencyType()
-	return account.getCurrencyType() != root_currency
+	return account.getCurrencyType() != get_base_currency()
 
 
 def merge_exchanges(account):
