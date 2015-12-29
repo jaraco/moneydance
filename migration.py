@@ -307,6 +307,21 @@ def infer_accounts(declared_accounts):
 	return [dict(name=name) for name in new_names]
 
 
+def is_dupe(pair):
+	"""
+	Are these two transactions, one local and one remote,
+	duplicates of one another?
+	"""
+	local, remote = pair
+	return (
+		local.getMemo() == remote.getOtherTxn(0).getMemo()
+		and
+		local.getDescription() == remote.getDescription()
+		and
+		local.getDateInt() == remote.getDateInt()
+	)
+
+
 def find_duplicate_transactions(account):
 	"""
 	For a given foreign transaction account, find matching
@@ -324,16 +339,7 @@ def find_duplicate_transactions(account):
 	)
 	pairs = itertools.product(local_txns, remote_txns)
 
-	for local, remote in pairs:
-		match = (
-			local.getMemo() == remote.getOtherTxn(0).getMemo()
-			and
-			local.getDescription() == remote.getDescription()
-			and
-			local.getDateInt() == remote.getDateInt()
-		)
-		if match:
-			yield local, remote
+	return filter(is_dupe, pairs)
 
 
 def is_foreign(account):
