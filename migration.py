@@ -336,6 +336,10 @@ def is_dupe(pair):
 		local.getDescription() == remote.getDescription()
 		and
 		local.getDateInt() == remote.getDateInt()
+		and
+		local.getOtherTxnCount() == remote.getOtherTxnCount()
+		and
+		local.getOtherTxn(0).getAccount() == remote.getOtherTxn(0).getAccount()
 	)
 
 
