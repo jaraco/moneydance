@@ -386,6 +386,7 @@ def _merge_exchange(local, remote):
 	"""
 	remote.setAmount(local.getValue(), remote.getAmount())
 	local.deleteItem()
+	remote.syncItem()
 
 
 def run(moneydance=None):
