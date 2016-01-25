@@ -25,6 +25,7 @@ import re
 import io
 import itertools
 import glob
+import __main__
 
 # Use lazy-evaluated versions as if under Python 3
 filter = itertools.ifilter
@@ -34,15 +35,12 @@ import com.infinitekind.moneydance.model as model
 import com.moneydance.apps.md.controller.Common as Common
 import java.io
 
-moneydance = None
+moneydance = __main__.moneydance
 here = os.path.dirname(__file__)
 
 # suppress linter warning for Py3
 if False:
 	long = int
-
-def init(moneydance):
-	globals().update(moneydance=moneydance)
 
 
 def delete_all_accounts():
@@ -391,13 +389,10 @@ def _merge_exchange(local, remote):
 	remote.getParentTxn().syncItem()
 
 
-def run(moneydance=None):
+def run():
 	"""
 	Run the import process across all accounts in accounts.json.
 	"""
-	if moneydance:
-		init(moneydance)
-
 	create_currencies()
 
 	start = datetime.datetime.utcnow()
