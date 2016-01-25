@@ -11,6 +11,8 @@ In addition to those instructions, here are some other caveats:
  - Rename any cash accounts to be "Investment Account (Cash)"
  - If the account name has any special characters, replace them
    with a dash in the saved file.
+ - Any accounts you intend to use with online banking must be
+   of type investment, bank, or credit card.
 """
 
 from __future__ import print_function, unicode_literals
