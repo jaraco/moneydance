@@ -121,6 +121,7 @@ def create_account(details):
 		idstr = details['currency']
 		currency = book.getCurrencies().getCurrencyByIDString(idstr)
 		account.setCurrencyType(currency)
+	account.syncItem()
 	yield account
 	if type_ == model.Account.AccountType.INVESTMENT:
 		print("Creating cash account for", account.getAccountName())
