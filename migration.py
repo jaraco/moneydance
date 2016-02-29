@@ -18,6 +18,7 @@ In addition to those instructions, here are some other caveats:
 from __future__ import print_function, unicode_literals
 
 import os
+import sys
 import json
 import datetime
 import calendar
@@ -53,6 +54,33 @@ def delete_all_accounts():
 	root = moneydance.getCurrentAccount()
 	for account in root.getSubAccounts():
 		account.deleteItem()
+
+
+def _reveal_protected_methods():
+	"""
+	Allow Jython to provide access to
+	non-public fields, methods, and constructors of Java objects.
+	http://www.jython.org/archive/22/userfaq.html#id16
+
+	Note you will need to restart the interpreter after installing
+	this setting.
+	"""
+	path = sys.path[0]
+	root = os.path.dirname(path)
+	registry = os.path.join(root, 'registry')
+	with open(registry, 'w') as strm:
+		strm.write("python.security.respectJavaAccessibility = false")
+
+
+def repair_sidebar_links():
+	"""
+	Call notifyAccountAdded on each sub account, correcting
+	for prior migrations that did not call syncItem.
+	"""
+	book = moneydance.getCurrentAccountBook()
+	root = moneydance.getCurrentAccount()
+	for account in root.getSubAccounts():
+		book.notifyAccountAdded(root, account)
 
 
 def get_account_by_name(name):
