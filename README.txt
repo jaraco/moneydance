@@ -5,7 +5,11 @@ Copy or link the modules in this directory into the Moneydance environment.
 Moneydance does add the tmp/pythonTemp/Lib to sys.path, so the following
 should work in OS X environments:
 
-    ln -s `pwd` ~/Library/Containers/com.infinitekind.MoneydanceOSX/Data/Library/Application\ Support/Moneydance/tmp/pythonTemp/Lib
+    ln -s $(pwd) ~/Library/Containers/com.infinitekind.MoneydanceOSX/Data/Library/Application\ Support/Moneydance/tmp/pythonTemp/Lib
+
+Or on xonsh:
+
+    ln -s @($(pwd).strip()) '~/Library/Containers/com.infinitekind.MoneydanceOSX/Data/Library/Application Support/Moneydance/tmp/pythonTemp/Lib'
 
 Usage
 =====
