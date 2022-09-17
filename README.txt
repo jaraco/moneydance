@@ -1,25 +1,15 @@
 Installation
 ============
 
-Copy or link the modules in this directory into the Moneydance environment.
-Moneydance does add the tmp/pythonTemp/Lib to sys.path, so the following
-should work in OS X environments:
-
-    ln -s $(pwd) ~/Library/Containers/com.infinitekind.MoneydanceOSX/Data/Library/Application\ Support/Moneydance/tmp/pythonTemp/Lib
-
-Or on xonsh:
-
-    ln -s @($(pwd).strip()) '~/Library/Containers/com.infinitekind.MoneydanceOSX/Data/Library/Application Support/Moneydance/tmp/pythonTemp/Lib'
+Using a regular Python interpreter, run `python -m install`.
 
 Usage
 =====
 
-Now you should be able to import the modules from the Python Environment.
+Now you should be able to import the modules from MoneyBot.
 
-If you have not already, enable the Python Interpreter extension and launch
-the interpreter.
-
-From the interpreter, simply import the module and invoke the desired function:
+From MoneyBot, add a snippet to simply import the module and invoke the
+desired function. ex:
 
     import migration
     migration.run(moneydance)
