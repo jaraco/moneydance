@@ -12,7 +12,4 @@ From MoneyBot, add a snippet to simply import the module and invoke the
 desired function. ex:
 
     import migration
-    migration.run(moneydance)
-
-Note that functions may require access to the "moneydance" object, so it is
-currently necessary to pass that in from the interpreter's local namespace.
+    migration.run()

@@ -5,11 +5,12 @@ Export and import the accounts from the sidebar.
 from __future__ import print_function
 
 import os
+import __main__
 
 from com.moneydance.apps.md.view.gui.sidebar import FullSideBarItemList
 from com.moneydance.apps.md.view.gui.sidebar.nodes import SideBarNodeFactory, SideBarNodeType
 
-global moneydance
+moneydance = __main__.moneydance
 
 
 default_name = os.path.join(os.path.dirname(__file__), 'sidebar accounts.txt')
