@@ -15,7 +15,7 @@ if False:
 def create_transaction(account):
     book = moneydance.getCurrentAccountBook()
     txn = model.ParentTxn(book)
-    txn.date = txn.taxDate = int(datetime.date.today().strftime('%Y%m%d'))
+    txn.date = txn.taxDate = int(datetime.date.today().strftime("%Y%m%d"))
     txn.account = account
     spl = model.SplitTxn(txn)
     spl.setAmount(long(1))

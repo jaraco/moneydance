@@ -16,11 +16,11 @@ def _print_transactions(limit=10):
 
     for txn in itertools.islice(txns.getAllTxns(), limit):
         print(
-            "transaction: date %u: description: %s for amount %s" % (
+            "transaction: date %u: description: %s for amount %s"
+            % (
                 txn.getDateInt(),
                 txn.getDescription(),
-                txn.getAccount().getCurrencyType().formatFancy(
-                    txn.getValue(), '.'),
+                txn.getAccount().getCurrencyType().formatFancy(txn.getValue(), "."),
             )
         )
 
